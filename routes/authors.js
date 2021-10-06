@@ -5,14 +5,21 @@ const router = express.Router();
 const Author = require("../models/author")
 
 //All authors route
-router.get("/",  async(req, res) => {
+router.get("/", async (req, res) => {
+    
+    let searchOptions = {}
+    //nie req.body bo szukamy nie w body a w queryString czyli to co jest w adresie strony
+    if (req.query.name != null && req.query.name !== "") {
+        //RegExp - regular expresion, i - case sensitve
+         searchOptions.name = new RegExp(req.query.name, "i")
+     }
     try {
         //szukanie na obiekcie author z mongoose, pusty oznacza, ze bez warunkow 
-        
-        const authors = await Author.find({});
-       
-       
-        res.render("authors/index", {authors: authors})
+        const authors = await Author.find(searchOptions);
+        res.render("authors/index", {
+            authors: authors,
+            searchOptions: req.query
+        })
     } catch {
          res.redirect("/")
     } 

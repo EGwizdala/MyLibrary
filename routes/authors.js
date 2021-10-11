@@ -16,6 +16,7 @@ router.get("/", async (req, res) => {
     try {
         //szukanie na obiekcie author z mongoose, pusty oznacza, ze bez warunkow 
         const authors = await Author.find(searchOptions);
+        // console.log(authors)
         res.render("authors/index", {
             authors: authors,
             searchOptions: req.query
@@ -38,14 +39,12 @@ router.get("/new", (req, res) => {
 
 //Create author route
 router.post('/', async (req, res) => {
-   
     // res.send("create")
     const author = new Author({
       name: req.body.name
     })
     try {
         const newAuthor = await author.save()
-        
         res.redirect(`authors`)
         console.log(author.name)
     //   res.redirect(`authors/${newAuthor.id}`)

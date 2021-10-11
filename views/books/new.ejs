@@ -1,0 +1,10 @@
+<h2>New Book</h2> 
+<!-- metoda post bo tworzy nowy obiekt, POST mozna uzyc tylko w formularzu -->
+<!-- The enctype attribute specifies how the form-data should be encoded when submitting it to the server. 
+multipart/form-data	 - This value is necessary if the user will upload a file through the form -->
+<form action="/books" method="POST" enctype="multipart/form-data">
+    <%- include("_form_fields")  %> 
+<!-- ankhor - use to links, buttons interacts with forms -->
+    <a href="/books">Cancel</a>
+    <button type="submit">Create</button>
+</form>  

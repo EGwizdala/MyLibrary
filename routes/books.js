@@ -2,27 +2,27 @@ const express = require('express');
 const author = require('../models/author');
 const router = express.Router();
 //path - biblioteka node.js, The path module provides utilities for working with file and directory paths. It can be accessed using
-const path = require('path')
+// const path = require('path')
 //fs - biblioteka node opowiedzalna za file sytem
-const fs = require('fs')
+// const fs = require('fs')
 
 //przywołanie dostępu do schematów dla autora i ksiazek
 const Book = require("../models/book"); 
 const Author = require("../models/author");
-const multer = require('multer');
+// const multer = require('multer');
 const { error } = require('console');
-
+// const uploadPath = path.join("public", Book.coverImageBasePath); 
 
 const imageMimeTypes = ["image/jpeg", "image/png", "image/gif"];
 // path.join - polaczy dwie rozne sciezki
-const uploadPath = path.join("public", Book.coverImageBasePath);
-const upload = multer({
-    dest: uploadPath,
-    //fileFilter przesiewa pliki jakie chcemy wczytac
-    fileFilter: (req, file, callback) => {
-        callback(null, imageMimeTypes.includes(file.mimetype))
-    }
-})
+
+// const upload = multer({
+//     dest: uploadPath,
+//     //fileFilter przesiewa pliki jakie chcemy wczytac
+//     fileFilter: (req, file, callback) => {
+//         callback(null, imageMimeTypes.includes(file.mimetype))
+//     }
+// })
 
 //All books route
 router.get("/", async (req, res) => {
@@ -68,8 +68,11 @@ router.get("/new", async(req, res) => {
 }) 
 
 //Create book route
-router.post('/', upload.single("cover"), async (req, res) => {
-    const fileName = req.file != null ? req.file.filename : null;
+// upload.single("cover") - nie jest potrzebne przy uzywaniu filepond i plikow zakdowanych w string
+// router.post('/', upload.single("cover"), async (req, res) => {
+
+router.post('/', async (req, res) => {
+    // const fileName = req.file != null ? req.file.filename : null;
     const book = new Book({
         title: req.body.title,
         author: req.body.author,
@@ -77,9 +80,10 @@ router.post('/', upload.single("cover"), async (req, res) => {
         publishDate: new Date(req.body.publishDate),
         pageCount: req.body.pageCount,
         description: req.body.description,
-        coverImageName: fileName,
-    })
-    console.log(`to jest book przed try ${book.publishDate}`)
+        // coverImageName: fileName,
+    }) 
+    console.log( book)
+    saveCover(book, req.body.cover)
     try {
         console.log("udalo sie");
         console.log(`to jest book w try ${book.publishDate}`)
@@ -89,18 +93,18 @@ router.post('/', upload.single("cover"), async (req, res) => {
         
     } catch(err) {
         console.log(err.message)
-        if (book.coverImageName != null) {
-            removeBookCover(book.coverImageName)
-        }
+        // if (book.coverImageName != null) {
+        //     removeBookCover(book.coverImageName)
+        // }
         renderNewPage(res, book, true)
     } 
 })
 
-function removeBookCover(fileName) {
-    fs.unlink(path.join(uploadPath, fileName), err => {
-        if(err) console.err(err.message)
-    })
-}
+// function removeBookCover(fileName) {
+//     fs.unlink(path.join(uploadPath, fileName), err => {
+//         if(err) console.err(err.message)
+//     })
+// }
  
 async function renderNewPage(res, book, hasError = false ) {
     try {
@@ -121,6 +125,14 @@ async function renderNewPage(res, book, hasError = false ) {
     }
 }
 
+function saveCover(book, coverEncoded) {
+    if (coverEncoded == null) return console.error
+    const cover = JSON.parse(coverEncoded)
+    if (cover != null && imageMimeTypes.includes(cover.type)) {
+        book.coverImage = new Buffer.from(cover.data, "base64")
+        book.coverImageType = cover.type
+    }
+}
 
 module.exports = router
 

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const path  = require('path')
-const coverImageBasePath = "uploads/bookCovers"
+// const coverImageBasePath = "uploads/bookCovers"
 
 const bookSchema = new mongoose.Schema({
     title: {
@@ -17,15 +17,23 @@ const bookSchema = new mongoose.Schema({
     pageCount: {
         type: Number,
         required: true
-    },
+    }, 
     createdAt: {
         type: Date,
         required: true,
         default: Date.now
     },
-    coverImageName: {
+    // coverImageName: { 
+    //     type: String,
+    //     required: false
+    // },
+    coverImage: {
+        type: Buffer,
+        required: true
+    },
+    coverImageType: {
         type: String,
-        required: false
+        required: true
     },
     author: {
     type: mongoose.Schema.Types.ObjectId,
@@ -35,13 +43,13 @@ const bookSchema = new mongoose.Schema({
 })
 
 // funkcja virtual w mongoos pozwala na stworzenie wirtualnej wlasciwosci/zmiennej. Uzyta jest funkcja normalna, bo potrzebne jest dziedziczenie po this
-bookSchema.virtual("coverImagePath").get(function () {
-    if (this.coverImageName != null) {
-        console.log(this.coverImageName);
-        return path.join("/", coverImageBasePath, this.coverImageName)
+bookSchema.virtual('coverImagePath').get(function() {
+    if (this.coverImage != null && this.coverImageType != null) {
+      return `data:${this.coverImageType};charset=utf-8;base64,${this.coverImage.toString('base64')}`
     }
-})
+  })
+
 
 module.exports = mongoose.model("Book", bookSchema);
 // module.exports.coverImageBasePath  - exprotuje jako zmienna coverImageBasePath 
-module.exports.coverImageBasePath = coverImageBasePath;
+// module.exports.coverImageBasePath = coverImageBasePath;

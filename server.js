@@ -32,6 +32,16 @@ const db = mongoose.connection
 db.on("error", error => console.error(error))
 db.once("open", () => console.log("conected to mongoose"))
 
+db.on('open', function (ref) {
+    console.log('Connected to mongo server.');
+    //trying to get collection names
+    mongoose.connection.db.listCollections().toArray(function (err, names) {
+        console.log(names); // [{ name: 'dbname.myCollection' }]
+        module.exports.Collection = names;
+    });
+})
+
+
 app.use('/', indexRouter)
 app.use('/authors', authorRouter)
 app.use('/books', bookRouter)

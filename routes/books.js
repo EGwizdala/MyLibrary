@@ -24,9 +24,19 @@ const imageMimeTypes = ["image/jpeg", "image/png", "image/gif"];
 //     }
 // })
 
+
+// const deleteAllData = async () => {
+//     try {
+//       await Book.deleteMany();
+//       console.log('All Data successfully deleted');
+//     } catch (err) {
+//       console.log(err);
+//     }
+// };
+// deleteAllData()
 //All books route
 router.get("/", async (req, res) => {
-    let query =  Book.find();
+    let query =  Book.find(); 
 
     const before = req.query.publishedBefore;
     const after = req.query.publishedAfter;
@@ -88,8 +98,8 @@ router.post('/', async (req, res) => {
         console.log("udalo sie");
         console.log(`to jest book w try ${book.publishDate}`)
         const newBook = await book.save();
-        //res.redirect(`books/${newBook.id}`);
-        res.redirect(`books`);
+        res.redirect(`books/${newBook.id}`);
+      
         
     } catch(err) {
         console.log(err.message)
@@ -105,8 +115,90 @@ router.post('/', async (req, res) => {
 //         if(err) console.err(err.message)
 //     })
 // }
- 
+
+//Show book route
+router.get('/:id', async (req, res) => {
+    try {
+        //populate - lets you reference documents in other collections.
+        const book = await Book.findById(req.params.id).populate("author").exec()
+        res.render('books/show', {book: book})
+    } catch (err) {
+        console.log(err)
+        res.redirect("/")
+    }
+})
+
+//Edit book route
+router.get('/:id/edit', async (req, res) => {
+    try {
+        const book = await Book.findById(req.params.id)
+       renderEditPage(res, book)
+    } catch (err) {
+        cosnole.log(err)
+        res.redirect("/")
+    }
+})
+
+
+//Update book route
+router.put('/:id', async (req, res) => {
+    let book 
+    try {
+        book = await Book.findById(req.params.id)
+        book.title = req.body.title
+        book.author = req.body.author
+        book.publishDate = new Date(req.body.publishDate)
+        book.pageCount = req.body.pageCount
+        book.description = req.body.description
+       
+        if (req.body.cover != null && req.body.cover !== "") {
+            saveCover(book, req.body.cover)
+        }
+        console.log(book.id)
+        await book.save()
+        res.redirect(`/books/${book.id}`)
+        
+    } catch (err) {
+        if (book != null) {
+            renderEditPage(res, book, true)
+            console.log(err.message)
+        } else {
+            res.redirect("/")
+            console.log(err.message)
+        }
+    } 
+})
+
+//Delete book route
+router.delete("/:id", async (req, res) => {
+    let book
+    try {
+        book = await Book.findById(req.params.id)
+        await book.remove()
+        res.redirect("/books")
+    } catch (error) {
+        if (book != null) {
+            res.render("books/show", {
+                book: book,
+                errorMessage: "Could not remove book"
+            })
+        } else {
+            res.redirect("/")
+            console.log(error.message)
+        }
+    }
+})
+
+
+
 async function renderNewPage(res, book, hasError = false ) {
+    renderFormPage(res, book, "new", hasError ) 
+}
+
+async function renderEditPage(res, book, hasError = false ) {
+    renderFormPage(res, book, "edit", hasError)
+}
+async function renderFormPage(res, book, form, hasError = false ) {
     try {
         const authors = await Author.find({});
         // params aby wyświetlać dynamicznie bład
@@ -115,16 +207,21 @@ async function renderNewPage(res, book, hasError = false ) {
             book: book
         }
         if (hasError) {
-            console.error(err.message);
-            params.errorMessage = "Error Creating Book";
+            if (form === "edit") {
+                console.error(err.message);
+                params.errorMessage = "Error Updating Book"; 
+            } else {
+                console.error(err.message);
+                params.errorMessage = "Error Creating Book"; 
+            }
         }
-        res.render("books/new", params)
-    } catch {
+        res.render(`books/${form}`, params)
+    } catch { 
         res.redirect(`books`);
 
     }
 }
-
+ 
 function saveCover(book, coverEncoded) {
     if (coverEncoded == null) return console.error
     const cover = JSON.parse(coverEncoded)

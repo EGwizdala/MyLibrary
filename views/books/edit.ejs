@@ -1,4 +1,4 @@
- <h2>Edit Book</h2> 
+ <h2 class = "page-header">Edit Book</h2> 
 <!-- metoda post bo tworzy nowy obiekt, POST mozna uzyc tylko w formularzu -->
 <!-- The enctype attribute specifies how the form-data should be encoded when submitting it to the server. 
 multipart/form-data	 - This value is necessary if the user will upload a file through the form -->
@@ -7,6 +7,9 @@ multipart/form-data	 - This value is necessary if the user will upload a file th
 <form action="/books/<%= book.id %>?_method=PUT" method="POST" >
     <%- include("_form_fields")  %> 
 <!-- ankhor - use to links, buttons interacts with forms -->
+<div class="form-row form-row-end btn-row">
     <a href="/books">Cancel</a>
-    <button type="submit">Update</button>
+    <button  class="btn btn-danger" type="submit">Update</button>
+</div>
+    
 </form>  

@@ -3,6 +3,8 @@
 <form action="/authors" method="POST">
     <%- include("_form_fields")  %> 
 <!-- ankhor - use to links, buttons interacts with forms -->
-    <a href="/authors">Cancel</a>
-    <button class="btn btn-primary" type="submit">Create</button>
+    <div class="form-row form-row-end btn-row"></div>
+        <a class="btn btn-danger" href="/authors">Cancel</a>
+        <button class="btn btn-primary" type="submit">Create</button>
+    </div>
 </form>  

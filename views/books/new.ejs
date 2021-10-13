@@ -6,7 +6,10 @@ multipart/form-data	 - This value is necessary if the user will upload a file th
 <!-- file pond zmienia pliki na string i nie ma potrzeby stosowana enctype -->
 <form action="/books" method="POST" >
     <%- include("_form_fields")  %> 
+    <div class= "form-row form-row-end btn-row">
+        <a class="btn btn-danger" href="/books">Cancel</a>
+        <button class="btn btn-primary" type="submit">Create</button>
+    </div>
 <!-- ankhor - use to links, buttons interacts with forms -->
-    <a href="/books">Cancel</a>
-    <button class="btn btn-primary" type="submit">Create</button>
+    
 </form>  

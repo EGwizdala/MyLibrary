@@ -14,7 +14,8 @@ On the main page there are displayed your recent books. The menu allows viewing 
 
 User interface developed with MVC.
 
-Based on tutorial: https://www.youtube.com/playlist?list=PLZlA0Gpn_vH8jbFkBjOuFjhxANC63OmXM
+Based on tutorial from WebDevSimplified: https://www.youtube.com/playlist?list=PLZlA0Gpn_vH8jbFkBjOuFjhxANC63OmXM
+
 
 ## Layout
 ![Screen](/imgs/mybrary.jpg)

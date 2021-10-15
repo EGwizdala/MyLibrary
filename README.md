@@ -1,5 +1,5 @@
 # MyLibrary
-An application that allows to add, delete and modify your favorite books.
+An application that allows to create and modify book list.
 
 ## Table of contents
 * [General info](#general-info)
@@ -10,7 +10,7 @@ An application that allows to add, delete and modify your favorite books.
 * [Contact](#contact)
 
 ## General info
-On the main page there are displayed your recent books. The menu allows viewing and add book and authors. To add a book, user has to set date of publish, title, page count, author,  description and set book cover. The data can be edited.   
+The home page displays the latest books. The menu allows you to view and add books and authors. To add a book, the user needs to set the publication date, title, number of pages, author, description and set the book cover. Data can be edited. 
 
 User interface developed with MVC.
 
